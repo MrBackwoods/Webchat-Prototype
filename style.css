@@ -1,0 +1,84 @@
+div {
+    width: 500px;
+    padding: 10px;
+    border: 1px solid black;
+    margin: 10px;
+    background-color: #191919;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+}
+
+body {
+	background-color: #2E2E2E;
+}
+
+h1 {
+	text-align: center;
+	font-size: 60px;
+  margin: 0px;
+  color: white;
+  font-family: georgia;
+  font-weight: normal;
+
+}
+
+p {
+  font-size: 16px;
+    color: white;
+
+}
+a {
+  font-size: 16px;
+    color: white;
+
+}
+
+h2 {
+  text-align: center;
+  margin: 0px;
+  color: white;
+  font-size: 17.5px;
+  font-weight: normal;
+    font-style: italic;
+}
+
+h3 {
+  text-align: center;
+  font-size: 30px;
+  margin: 0px;
+  color: black;
+  font-family: georgia;
+  font-weight: normal;
+    color: white;
+
+}
+
+#chatmessage {
+    width: 380px;
+}
+
+#title{
+  background-color: #2E2E2E;
+  width: 520px;
+  border: 0px;
+}
+
+#info{
+  width: 280px;
+}
+
+#chat{
+  height: 280px;
+  overflow-y: scroll;
+}
+
+#messagesending{
+}
+
+#namechange{
+  width: 280px;
+}
+
+#contact{
+}

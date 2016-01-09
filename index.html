@@ -1,0 +1,33 @@
+<!doctype html>
+  <html>
+    <head>
+      <title>Webchat Prototype 1.0 - Made by Joni Rokkanen</title>
+      <link rel="stylesheet" href="style.css">
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+      <script src="client.js"></script>
+    </head>
+    <body>
+      <div id="title">
+        <h1> Webchat Prototype</h1><br>
+        <h2> Made by Joni Rokkanen</h2><br>
+        <hr><hr>
+      </div>
+      <div id="info">
+        <p id="name"> </p>
+        <p id="onlinechatters"> </p> </div>
+      <div id ="namechange">
+          <p>Change your chat name: <br><br>
+          <input type="text" id="chatname">
+          <button onclick="changeName()">Change name</button>
+      </div>
+      <div id ="messagesending">
+          <p>Type your message: <br><br>
+          <input type="text" id="chatmessage" onkeydown="if (event.keyCode == 13) { sendMessage(); return false; }">
+      <button onclick="sendMessage()">Send message</button>
+      </div>
+      <div id="chat">
+      </div>
+    </body>
+  </html>
