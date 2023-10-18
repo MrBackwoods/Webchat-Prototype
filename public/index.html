@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Webchat Prototype 1.0</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="client.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="title">
+        <h1>Webchat Prototype</h1>
+      </div>
+      <div id="info">
+        <p id="name">Your Name: </p>
+        <p id="onlinechatters">Online Users: </p>
+      </div>
+      <div id="namechange">
+        <p>Change your chat name:</p>
+        <input type="text" id="chatname">
+        <button onclick="changeName()">Change Name</button>
+      </div>
+      <div id="messagesending">
+        <p>Type your message:</p>
+        <input type="text" id="chatmessage" onkeydown="if (event.keyCode == 13) { sendMessage(); return false; }">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+      <div id="chat"></div>
+    </div>
+  </body>
+</html>

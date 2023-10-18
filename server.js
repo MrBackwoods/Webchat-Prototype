@@ -1,50 +1,64 @@
-//all the required pieces
-var express = require('express')  
-, app = express()
-, server = require('http').createServer(app)
-, io = require('socket.io')(server);
-var path = require('path');
+const express = require('express');
+const http = require('http');
+const socketIO = require('socket.io');
+const path = require('path');
 
-//front page and it's scripts and styles
-app.get('/', function (req, res) {
-    res.sendFile(path.resolve('index.html'));
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+
+const PORT = process.env.PORT || 8080;
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Store online users
+const onlineUsers = new Map();
+
+io.on('connection', (socket) => {
+  // Handle new user connections
+  const defaultName = `User${Math.floor(Math.random() * 1000) + 1}`;
+  socket.name = defaultName;
+  onlineUsers.set(socket.id, socket.name);
+  updateOnlineUsers();
+
+  // Emit a welcome message to the user
+  socket.emit('welcome', `Welcome to the chat, ${socket.name}!`);
+
+  // Emit default name to the user
+  socket.emit('name', defaultName);
+
+  // Broadcast a user's connection to others
+  socket.broadcast.emit('chat', `${socket.name} connected to the chat.`);
+
+  // Handle chat messages
+  socket.on('chat', (msg) => {
+    io.emit('chat', `${socket.name}: ${msg}`);
+  });
+
+  // Change user name
+  socket.on('changeName', (newName) => {
+    const oldName = socket.name;
+    socket.name = newName;
+    onlineUsers.set(socket.id, newName);
+    updateOnlineUsers();
+	io.emit('name', newName);
+  });
+
+  // Handle disconnections
+  socket.on('disconnect', () => {
+    const disconnectedUser = onlineUsers.get(socket.id);
+    onlineUsers.delete(socket.id);
+    updateOnlineUsers();
+    io.emit('chat', `${disconnectedUser} disconnected.`);
+  });
 });
-app.use('/style.css', express.static(__dirname + '/style.css'));
-app.use('/client.js', express.static(__dirname + '/client.js'));
 
-//chat features
-var peopleOnline = 0;
-io.on('connection', function(socket){
-  socket.name = "Unknown" + Math.floor((Math.random() * 100) + 1);
-  peopleOnline += 1;
+// Update the count of online users and notify all clients
+function updateOnlineUsers() {
+  io.emit('online', onlineUsers.size);
+}
 
-    console.log(socket.name + " connected to chat!");
-    io.emit('chat',socket.name + " connected to chat.");
-    io.emit('online', peopleOnline);
-     socket.emit('name', socket.name);
-
-    	socket.on('chat', function(msg){
-    	io.emit('chat', socket.name + ": " +msg);
-      console.log(msg);
-		});
-
-		socket.on('changename', function(msg){
-		io.emit('chat',socket.name + " disconnected.");
-		socket.name = msg;
-    socket.emit('name', socket.name);
-		io.emit('chat',socket.name + " connected to chat.");
-		});
-
-   	socket.on('disconnect', function(){
-    peopleOnline -= 1;
-    io.emit('online', peopleOnline);
-    console.log(socket.name + " disconnected.");
-    io.emit('chat', socket.name + " disconnected.");
-	});
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-
-//start server on port 8080
-server.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1", function(){
-  console.log('listening on port 8080');
-});
-
