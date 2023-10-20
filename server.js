@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
 socket.on('changeName', (newName) => {
   if (!onlineUsers.has(newName)) {
     const oldName = socket.name;
-	onlineUsers.delete(socket.name);
+    onlineUsers.delete(socket.name);
     socket.name = newName;
     onlineUsers.set(newName, socket.id);
     updateOnlineUsers();
