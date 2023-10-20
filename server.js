@@ -17,9 +17,9 @@ const onlineUsers = new Map();
 
 io.on('connection', (socket) => {
   // Handle new user connections
-  const defaultName = `User${Math.floor(Math.random() * 1000) + 1}`;
+  const defaultName = generateNewUsername();
   socket.name = defaultName;
-  onlineUsers.set(socket.id, socket.name);
+  onlineUsers.set(socket.name, socket.id);
   updateOnlineUsers();
 
   // Emit a welcome message to the user
@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
   socket.emit('name', defaultName);
 
   // Broadcast a user's connection to others
-  socket.broadcast.emit('chat', `${socket.name} connected to the chat.`);
+  socket.broadcast.emit('chat', `${socket.name} connected to the chat`);
 
   // Handle chat messages
   socket.on('chat', (msg) => {
@@ -37,20 +37,26 @@ io.on('connection', (socket) => {
   });
 
   // Change user name
-  socket.on('changeName', (newName) => {
+socket.on('changeName', (newName) => {
+  if (!onlineUsers.has(newName)) {
     const oldName = socket.name;
+	onlineUsers.delete(socket.name);
     socket.name = newName;
-    onlineUsers.set(socket.id, newName);
+    onlineUsers.set(newName, socket.id);
     updateOnlineUsers();
-	io.emit('name', newName);
-  });
+    io.emit('name', newName);
+    io.emit('chat', `${oldName} changed their name to ${newName}`);
+  } 
+  else {
+    socket.emit('chat', `Could not change name, ${newName} is already in use`);
+  }
+});
 
-  // Handle disconnections
   socket.on('disconnect', () => {
-    const disconnectedUser = onlineUsers.get(socket.id);
-    onlineUsers.delete(socket.id);
-    updateOnlineUsers();
-    io.emit('chat', `${disconnectedUser} disconnected.`);
+    const disconnectedUserName = socket.name;
+    onlineUsers.delete(disconnectedUserName); 
+    updateOnlineUsers(); 
+    io.emit('chat', `${disconnectedUserName} has left the chat`);
   });
 });
 
@@ -59,6 +65,18 @@ function updateOnlineUsers() {
   io.emit('online', onlineUsers.size);
 }
 
+// Function to generate random username
+function generateNewUsername() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+  for (let i = 0; i < 5; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
+  }
+  return `User_${randomString}`;
+}
+
+// Server start listening
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

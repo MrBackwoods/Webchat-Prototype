@@ -1,19 +1,22 @@
-
-// Remember to add your site address
+// Remember to add your socket address
 const socket = io.connect("localhost:8080/");
 
 // Function to send messages
 function sendMessage() {
     const data = document.getElementById("chatmessage").value;
-    document.getElementById("chatmessage").value = '';
-    socket.emit('chat', data);
+    if (data.trim() !== '') {
+        document.getElementById("chatmessage").value = '';
+        socket.emit('chat', data);
+    }
 }
 
 // Function to change name
 function changeName() {
     const data = document.getElementById("chatname").value;
-    document.getElementById("chatname").value = '';
-	socket.emit('changeName', data);
+    if (data.trim() !== '') {
+        document.getElementById("chatname").value = '';
+        socket.emit('changeName', data);
+    }
 }
 
 // Update chat name when received from the server
@@ -37,3 +40,27 @@ socket.on('chat', (msg) => {
 function addZero(i) {
     return i < 10 ? "0" + i : i;
 }
+
+// Add your event listeners 
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.getElementById("chatmessage").addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+
+    document.getElementById("chatname").addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            changeName();
+        }
+    });
+
+    document.getElementById("sendMessageButton").addEventListener("click", sendMessage);
+    document.getElementById("nameButton").addEventListener("click", changeName);
+});
+
+
+
+
+

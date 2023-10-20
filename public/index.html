@@ -19,12 +19,12 @@
       <div id="namechange">
         <p>Change your chat name:</p>
         <input type="text" id="chatname">
-        <button onclick="changeName()">Change Name</button>
+		<button id="nameButton">Change Name</button>
       </div>
       <div id="messagesending">
         <p>Type your message:</p>
-        <input type="text" id="chatmessage" onkeydown="if (event.keyCode == 13) { sendMessage(); return false; }">
-        <button onclick="sendMessage()">Send</button>
+        <input type="text" id="chatmessage">
+		<button id="sendMessageButton">Send</button>
       </div>
       <div id="chat"></div>
     </div>
